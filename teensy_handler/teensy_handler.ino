@@ -24,9 +24,9 @@ void setup()
   pulse_ready=1;
   event=0;//initial
   latest_depth=0;
-  Wire.begin(42);                // join i2c bus with address #9
-  Wire.onReceive(receiveEvent); // register event
-  Wire.onRequest(requestEvent); // register event
+  Wire1.begin(42);                // join i2c bus with address #9
+  Wire1.onReceive(receiveEvent); // register event
+  Wire1.onRequest(requestEvent); // register event
   Serial.begin(9600);           // start serial for output
   Wire.begin();
 
@@ -94,7 +94,7 @@ void requestEvent()
 {
   switch(event) {
     case(1) :
-      Wire.write(latest_depth);
+      Wire1.write(latest_depth);
     default :
       Serial.println("Error sending");
   }
