@@ -1,6 +1,8 @@
 #include <Wire.h>
 #include <Servo.h>
 #include <Stdint.h>
+#include "SI7021.h"
+//#include "SI7021\SI7021.cpp"
 
 #define PRESSURE_PIN A0
 #define TORPEDO_PIN 8
@@ -11,9 +13,13 @@
 String i2c_read;
 
 Servo marker_dropper;
+SI7021 TempSensor;
+
 
 const int I2C_ADDRESS = 0x08; //I2C_ADDRESS
 //I2C_ADDRESS
+
+const int TEMP_SAMPLE_RATE = 1000; //Samples temp every 5 sec
 
 int pressure;
 
@@ -23,7 +29,12 @@ uint16_t temp;
 char id;
 bool flag = false;
 
+double prev_time = 0;
+
+
 int readPressure();
+
+
 
 void setup()
 {
@@ -36,7 +47,7 @@ void setup()
   Wire.begin(I2C_ADDRESS); //join I2C as slave with I2C_ADDRESS
   Wire.onReceive(receiveEvent);
   Serial.begin(9600);
-  
+
 }
 
 void loop() 
@@ -52,6 +63,14 @@ void loop()
 //    delay(15);                       // waits 15ms for the servo to reach the position 
 //  } 
 // 
+    if((millis()-prev_time)>=TEMP_SAMPLE_RATE){
+      prev_time = millis();
+      temp = TempSensor.readTemp();
+      if(TempSensor.isNewValue()){
+        Serial.print("NEW VALUE: ");
+      }
+      Serial.println(temp);
+    }
   
 }
 
